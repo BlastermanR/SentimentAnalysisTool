@@ -16,7 +16,7 @@ def PreprocessData(InputPath, OutputFile):
     df = pre.CleanDataset(df)
     df = pre.TokenizeDataset(df)
     df = pre.RemoveStopwordDatset(df)
-    #df = pre.Lemmatization(df)
+    df = pre.Lemmatization(df)
     # Create preprocessedData Directory if it does not exits
     # Write data to output file
     if not os.path.exists(OutputPath):
@@ -28,5 +28,5 @@ def PreprocessData(InputPath, OutputFile):
             print(f"Error creating folder: {e}")
     df.to_csv(OutputPath + OutputFile, encoding='utf-8', index=False)
 
-PreprocessData("./datasets/Gold.csv","out.csv")
+PreprocessData("./datasets/test.csv","out2.csv")
     

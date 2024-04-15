@@ -70,23 +70,18 @@ def RemoveStopwordDatset(df):
 # initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
 def Lemmatization(df):
-    def lemmatizeTokens(sentence):
-        try:
-            # Assuming sentence is a string, tokenize it first
-            tokens = sentence.split()
-            
-            # Initialize WordNet lemmatizer
-            lemmatizer = WordNetLemmatizer()
-            
-            # Lemmatize each token
-            lemmatizedTokens = [lemmatizer.lemmatize(token) for token in tokens]
-            
-            # Join the lemmatized tokens back into a sentence
-            lemmatizedSentence = ' '.join(lemmatizedTokens)
-            
-            return lemmatizedSentence
-        except Exception as e:
-            print(f"Error lemmatizing sentence: {e}")
-            return sentence  # Return the original sentence if an error occurs
-    df['lemmatizedSentence'] = df['Sentence'].apply(lemmatizeTokens)
+    def lemmatizeTokens(tokens):
+        # convert POS tag to WordNet format
+        def get_wordnet_pos(word):
+            tag = nltk.pos_tag([word])[0][1][0].upper()
+            tag_dict = {"J": wordnet.ADJ,
+                        "N": wordnet.NOUN,
+                        "V": wordnet.VERB,
+                        "R": wordnet.ADV}
+            return tag_dict.get(tag, wordnet.NOUN)
+        # lemmatize tokens
+        lemmas = [lemmatizer.lemmatize(token, get_wordnet_pos(token)) for token in tokens]
+        # return lemmatized tokens as a list
+        return lemmas
+    df['Sentence'] = df['Sentence'].apply(lemmatizeTokens)
     return df
