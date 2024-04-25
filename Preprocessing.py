@@ -81,7 +81,8 @@ def Lemmatization(df):
             return tag_dict.get(tag, wordnet.NOUN)
         # lemmatize tokens
         lemmas = [lemmatizer.lemmatize(token, get_wordnet_pos(token)) for token in tokens]
-        # return lemmatized tokens as a list
+        # return lemmatized tokens as string
+        lemmas = ' '.join(lemmas)
         return lemmas
     df['Sentence'] = df['Sentence'].apply(lemmatizeTokens)
     return df
