@@ -12,12 +12,15 @@
 import pandas as pd
 import numpy as np
 import os
+import random
+
 import nltk
 import nltk.classify
 from nltk.classify import NaiveBayesClassifier
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.sentiment import SentimentAnalyzer
 from nltk.sentiment.util import *
+
 from sklearn.metrics import classification_report
 # Download ntlk Libraries
 nltk.download('vader_lexicon')
@@ -54,36 +57,12 @@ def PreprocessData(inputPath):
     #writeToCSV("preprocessedData/", "out.csv", df)
     return df
 
-# Create Training & Test Dataset
-#   Args:
-#    - dataset: pandas DataFrame containing the dataset to be split.
-#    - split: float value between 0 and 1 indicating the percentage of entries to include in the training dataset.
-#   Return:
-#    - training: pandas DataFrame to store the training dataset.
-#    - test: pandas DataFrame to store the test dataset.
-def createDataset(dataset, split):
-    # Calculate the number of entries for training dataset based on the split percentage
-    train_size = int(len(dataset) * split)
+# Implement Random
+def RandomModel(testModel):
+    def getRandom(text):
+        return random.randint(-1, 1)
+    testModel['TestRandomSentiment'] = testModel['Sentence'].apply(getRandom)
 
-    # Randomly select indices for the training dataset
-    train_indices = np.random.choice(dataset.index, train_size, replace=False)
-
-    # Select remaining indices for the test dataset
-    test_indices = dataset.index.difference(train_indices)
-
-    # Populate training and test datasets based on selected indices
-    training = dataset.loc[train_indices]
-    test = dataset.loc[test_indices]
-
-    # Reset indices for training and test datasets
-    training.reset_index(drop=True, inplace=True)
-    test.reset_index(drop=True, inplace=True)
-
-    #writeToCSV("preprocessedData/", "training.csv", training)
-    #writeToCSV("preprocessedData/", "test.csv", test)
-    return training, test
-
-# Implement NLP Models
 # Implements nltk Vader Model for Sentiment Analysis
 #   Args:
 #    - testModel: pandas DataFrame containing the text data to be analyzed.
@@ -96,9 +75,9 @@ def NltkVaderTestModel(testModel):
     # Function used to analyze individual lines
     def getSentiment(text):
         sentimentScore = analyzer.polarity_scores(text)
-        if (sentimentScore['compound'] < -1/3):
+        if (sentimentScore['compound'] < -0.05):
             return -1
-        elif (sentimentScore['compound'] > 1/3):
+        elif (sentimentScore['compound'] > 0.05):
             return 1
         else:
             return 0
@@ -107,7 +86,23 @@ def NltkVaderTestModel(testModel):
     testModel['TestVaderSentiment'] = testModel['Sentence'].apply(getSentiment)
     return testModel
 
-data = PreprocessData("./datasets/Emotions.csv")
+
+## MAIN PROGRAM LINE ##
+# Path to dataset (csv file)
+path = "./datasets/Tweets1.csv"
+
+# Perform Preprocessing
+data = PreprocessData(path)
+
+# Test dataset
+results = RandomModel(data)
 results = NltkVaderTestModel(data)
+
+# Write to output file
+writeToCSV("preprocessedData/", "output.csv", results)
+
+# Display results
+print("RANDOM:")
+print(classification_report(results['Sentiment'], results['TestRandomSentiment']))
+print("VADER:")
 print(classification_report(results['Sentiment'], results['TestVaderSentiment']))
-writeToCSV("preprocessedData/", "test.csv", results)

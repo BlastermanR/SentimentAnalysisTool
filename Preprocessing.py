@@ -32,6 +32,10 @@ from nltk.corpus import wordnet
 #   4. numbers
 # Define a function to remove URLs from text
 def CleanDataset(df):
+    # Excise empty/invalid rows in dataset 
+    df = df.dropna(subset=['Sentence'])
+    df.loc[:,'Sentence'] = df['Sentence'].fillna('')
+    
     # Lowercase
     df = df.map(lambda x: x.lower() if isinstance(x, str) else x)
 
