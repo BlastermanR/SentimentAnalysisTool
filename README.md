@@ -1,8 +1,8 @@
 # SentimentAnalysisTool
 Sentiment Analysis Tool Project for ECCS 4461 - Artificial Intelligence by Ryan Massie
 
-Version: 0.0
-Release 4/12/24
+Version: 1.0
+Release 4/26/24
 
 Natural Language Processing (NLP) is broken into these componants:
 1.  Text Acquisition
@@ -20,4 +20,11 @@ Natural Language Processing (NLP) is broken into these componants:
 13. Machine Translation
 
 The goal of this project is to design a system to perform these key task using AI/Machine Learning databases.
+Implemented Models Include:
+    1. Random
+    2. NTLK Vader Model
+    3. Bi-Directional Deep Learning Model implemented using Keras & Tensorflow
 
+Run SentimentAnalysisTool.py to execute Takes About 2 Hours (on my laptop) to build Keras model. Results can be viewed below.
+
+![alt text](image.png)
